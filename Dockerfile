@@ -1,5 +1,5 @@
 # Use a specific Node.js version for better reproducibility
-FROM node:23.3.0-slim AS builder
+FROM --platform=linux/amd64 node:23.3.0-slim AS builder
 
 # Install pnpm globally and install necessary build tools
 RUN npm install -g pnpm@9.4.0 && \
@@ -29,7 +29,7 @@ RUN pnpm install \
     && pnpm prune --prod
 
 # Create a new stage for the final image
-FROM node:23.3.0-slim
+FROM --platform=linux/amd64 node:23.3.0-slim
 
 # Install runtime dependencies if needed
 RUN npm install -g pnpm@9.4.0 && \
@@ -52,4 +52,4 @@ COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/characters ./characters
 
 # Set the command to run the application
-CMD ["pnpm", "start"]
+CMD ["pnpm", "start", "--character=./app/characters/fleek-docs.character.json"]
